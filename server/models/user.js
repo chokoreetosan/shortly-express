@@ -1,5 +1,9 @@
 const utils = require('../lib/hashUtils');
 const Model = require('./model');
+const mysql = require('mysql');
+const db = require('../db/index.js');
+
+//../db
 
 /**
  * Users is a class with methods to interact with the users table, which
@@ -43,6 +47,23 @@ class Users extends Model {
     };
 
     return super.create.call(this, newUser);
+  }
+
+  // method that queries database for password and salt linked to username
+  getPasswordandSalt(username, password) {
+    const queryString = `select password, salt from users where (username = '${username}')`;
+    db.query(queryString, (err, results) => {
+      // console.log(results);
+      if (err) { console.error(err) }
+      else{
+        var attempted = password;
+        if (this.compare(attempted, results[0].password, results[0].salt)) {
+          console.log('true');
+        } else {
+          console.log('false');
+        }
+      }
+    });
   }
 }
 
