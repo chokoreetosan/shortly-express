@@ -13,7 +13,7 @@ var port = 4568;
 // Remove the 'x' from beforeEach block when working on
 // authentication tests.
 /************************************************************/
-var beforeEach = function() {};
+var xbeforeEach = function() {}; // keep x here
 /************************************************************/
 
 
@@ -43,7 +43,6 @@ describe('', function() {
       password: '',
       database: 'shortly'
     });
-
     /**************************************************************************************/
     /* TODO: If you create a new MySQL tables, add it to the tablenames collection below. */
     /**************************************************************************************/
@@ -123,7 +122,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Account Creation:', function() {
+  describe('Account Creation:', function() {
 
     it('signup creates a new user record', function(done) {
       var options = {
@@ -134,8 +133,8 @@ describe('', function() {
           'password': 'Samantha'
         }
       };
-
       request(options, function(error, res, body) {
+        if (error) { return done(error); }
         var queryString = 'SELECT * FROM users where username = "Samantha"';
         db.query(queryString, function(err, rows) {
           if (err) { done(err); }
@@ -152,19 +151,26 @@ describe('', function() {
         'method': 'POST',
         'uri': 'http://127.0.0.1:4568/signup',
         'json': {
-          'username': 'Samantha',
-          'password': 'Samantha'
+          'username': 'Simon',
+          'password': 'Simon'
         }
       };
 
       request(options, function(error, res, body) {
-        if (error) { return done(error); }
-        var queryString = 'SELECT password FROM users where username = "Samantha"';
+        if (error) {
+          console.log(error);
+          return done(error);
+        }
+        var queryString = 'SELECT * FROM users';
+        // var queryString = 'SELECT password FROM users where username = "Simon"';
         db.query(queryString, function(err, rows) {
+          console.log('this is the query',queryString);
           if (err) { return done (err); }
+          console.log(rows);
+          console.log(rows[0]);
           var user = rows[0];
           expect(user.password).to.exist;
-          expect(user.password).to.not.equal('Samantha');
+          expect(user.password).to.not.equal('Simon');
           done();
         });
       });
@@ -208,7 +214,7 @@ describe('', function() {
     });
   });
 
-  xdescribe('Account Login:', function() {
+  describe('Account Login:', function() {
 
     beforeEach(function(done) {
       var options = {

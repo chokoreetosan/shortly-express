@@ -81,30 +81,47 @@ app.post('/links',
 app.get('/login',
 (req, res) => {
   res.render('login');
+  res.end();
 });
 
-// const mysql = require('mysql');
-// const db = require('./db/index.js');
 app.post('/login', (req,res) =>{
-  // var attempted = req.body.password;
-  // models.Users.compare(attempted, password, salt);
   models.Users.getPasswordandSalt(req.body.username, req.body.password);
-  // console.log(mysql);
-
-    // do something results
-    res.statusCode = 200;
+  res.statusCode = 200;
+  res.end();
+  // TODO: render account page
 });
 
 
 app.get('/signup', (req,res) =>{
   res.render('signup');
+  res.end();
 });
 
 app.post('/signup', (req,res)=>{
-  //  console.log('does models exist',models);
-  //  console.log('does models.Users exist', models.Users)
-  models.Users.create({username:req.body.username, password:req.body.password})
+  // use models get method to check if user exists
+  var username = req.body.username;
+  var password = req.body.password;
+  console.log('password',password);
+  return models.Users.get({username})
+  .then(user =>{
+    if(user){
+      res.redirect('/signup');
+    }
+    return models.Users.create({ username, password});
+  })
+  // .then(result => console.log(result))
+  // after creating new user
+  // upgrade session and associate session with new user
+  // then redirect to their account page
+  // .then(results => {
+  //   models.Sessions.update({id: req.session.id},{userId:results.insertId});
+  // })
+  .then (user => {
+    res.redirect('/');
+  })
+  .catch()//err => console.error(err))
   res.statusCode = 200;
+  res.end();
 })
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail

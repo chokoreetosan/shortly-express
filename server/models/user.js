@@ -49,6 +49,23 @@ class Users extends Model {
     return super.create.call(this, newUser);
   }
 
+  // method that finds if username exists, if not creates user
+  // if username does exist, message to page
+  // findOrCreate({ username, password }) {
+  //   const queryString = `select username from users where (username = '${username}')`;
+  //   db.query(queryString, (err, results) => {
+  //     if (err) { console.error(err) }
+  //     else if (results.length !== 0) { // username exists
+  //       // TODO: make sure error message gets to user
+  //       console.log('Username exists. Please choose another username.');
+  //       return true;
+  //     } else {
+  //       this.create.call(this,{ username, password });
+  //       return false;
+  //     }
+  //   });
+  // }
+
   // method that queries database for password and salt linked to username
   getPasswordandSalt(username, password) {
     const queryString = `select password, salt from users where (username = '${username}')`;
